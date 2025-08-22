@@ -1,0 +1,32 @@
+.success-modal {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  width: 420px;
+  max-width: calc(100% - 28px);
+  text-align: center;
+  padding: 24px 20px 18px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+}
+
+.big-check { font-size: 46px; margin-bottom: 10px; }
+.success-modal h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 800;
+}
+.success-modal p {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.btn.success {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn.success:hover { background: var(--accent-dark); }

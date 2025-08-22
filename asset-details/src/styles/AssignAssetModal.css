@@ -1,0 +1,86 @@
+.modal {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  width: 640px;
+  max-width: calc(100% - 28px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+}
+
+.modal-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #f9fafb;
+  border-radius: 12px 12px 0 0;
+}
+.modal-titlebar h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.modal-titlebar .x {
+  font-size: 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.form-grid {
+  padding: 14px 16px 16px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.row.full { grid-template-columns: 1fr; }
+
+.field label {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.req { color: #dc2626; }
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+}
+.field textarea { min-height: 72px; resize: none; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 6px 16px 16px;
+}
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent-dark); }
+.btn.gray { background: #e5e7eb; color: #111827; }
+.btn.gray:hover { background: #d1d5db; }
+
