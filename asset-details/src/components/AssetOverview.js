@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { FaEdit } from 'react-icons/fa';
 import "../styles/AssetOverview.css";
 
 const formatDate = (dateString) => {
@@ -7,8 +8,49 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
-export default function AssetOverview({ onAddAssign, onAddMaintenance, assignments = [], maintenanceLogs = [] }) {
-  console.log('Rendering AssetOverview with:', { assignments, maintenanceLogs });
+export default function AssetOverview({ onAddAssign, onAddMaintenance, assignments = [], maintenanceLogs = [], onUpdateAssignment }) {
+  const [editingAssignment, setEditingAssignment] = useState(null);
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const updatedAssignment = {
+      ...editingAssignment,
+      assigned_to: formData.get('assigned_to'),
+      department: formData.get('department'),
+      date: formData.get('date'),
+      end_date: formData.get('end_date') || null,
+      location: formData.get('location')
+    };
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/assignments/${editingAssignment.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedAssignment),
+      });
+
+      const responseData = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Failed to update assignment');
+      }
+
+      if (responseData.success && responseData.data) {
+        if (onUpdateAssignment) {
+          onUpdateAssignment(responseData.data);
+        }
+        setEditingAssignment(null);
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Error updating assignment:', error);
+    }
+  };
+
   return (
     <div className="overview">
       <div className="title-block">
@@ -44,7 +86,8 @@ export default function AssetOverview({ onAddAssign, onAddMaintenance, assignmen
                 <th>Department</th>
                 <th>Start Date</th>
                 <th>Location</th>
-                <th>Status</th>
+                <th>End Date</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -56,16 +99,21 @@ export default function AssetOverview({ onAddAssign, onAddMaintenance, assignmen
                     <td>{assignment.department}</td>
                     <td>{new Date(assignment.date).toLocaleDateString()}</td>
                     <td>{assignment.location}</td>
+                    <td>{assignment.end_date ? new Date(assignment.end_date).toLocaleDateString() : 'N/A'}</td>
                     <td>
-                      <span className={`badge ${assignment.status === 'Active' ? 'inuse' : ''}`}>
-                        {assignment.status}
-                      </span>
+                      <button 
+                        onClick={() => setEditingAssignment(assignment)}
+                        className="edit-btn"
+                        aria-label="Edit assignment"
+                      >
+                        <FaEdit />
+                      </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: 'center', padding: '1rem' }}>
+                  <td colSpan="7" style={{ textAlign: 'center', padding: '1rem' }}>
                     No assignment history found
                   </td>
                 </tr>
@@ -114,6 +162,72 @@ export default function AssetOverview({ onAddAssign, onAddMaintenance, assignmen
           </table>
         </div>
       </section>
+
+      {editingAssignment && (
+        <div className="modal-overlay" onClick={() => setEditingAssignment(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-titlebar">
+              <h3>Edit Assignment</h3>
+              <button className="x" onClick={() => setEditingAssignment(null)}>×</button>
+            </div>
+            <form onSubmit={handleEditSubmit} className="form-grid">
+              <div className="row">
+                <div className="field">
+                  <label>Assigned To <span className="req">*</span></label>
+                  <input 
+                    name="assigned_to" 
+                    type="text" 
+                    defaultValue={editingAssignment.assigned_to} 
+                    required 
+                  />
+                </div>
+                <div className="field">
+                  <label>Department <span className="req">*</span></label>
+                  <input 
+                    name="department" 
+                    type="text" 
+                    defaultValue={editingAssignment.department} 
+                    required 
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="field">
+                  <label>Start Date <span className="req">*</span></label>
+                  <input 
+                    name="date" 
+                    type="date" 
+                    defaultValue={editingAssignment.date.split('T')[0]} 
+                    required 
+                  />
+                </div>
+                <div className="field">
+                  <label>End Date</label>
+                  <input 
+                    name="end_date" 
+                    type="date" 
+                    defaultValue={editingAssignment.end_date ? editingAssignment.end_date.split('T')[0] : ''} 
+                  />
+                </div>
+              </div>
+              <div className="row full">
+                <div className="field">
+                  <label>Location</label>
+                  <input 
+                    name="location" 
+                    type="text" 
+                    defaultValue={editingAssignment.location} 
+                  />
+                </div>
+              </div>
+              <div className="modal-actions">
+                <button type="submit" className="btn primary">Save Changes</button>
+                <button type="button" className="btn gray" onClick={() => setEditingAssignment(null)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
