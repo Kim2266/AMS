@@ -20,7 +20,7 @@ export default function SuccessModal({ onClose, type = 'assignment' }) {
   return (
     <div className="modal-overlay" role="dialog" aria-modal="true">
       <div className="success-modal">
-        <div className="big-check">✅</div>
+        <div className="big-check">🎉 </div>
         <h2>{title}</h2>
         <p>{message}</p>
         <button className="btn success" onClick={onClose}>
